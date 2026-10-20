@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecallAI | Progress</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="dashboard-page">
+<header class="dashboard-header">
+    <div class="logo"><div class="logo-mark">R</div><div><h2>RecallAI</h2><span>Memory training</span></div></div>
+    <div class="header-actions"><a class="text-link" href="/">Chat</a><a class="text-link" href="/journal">Journal</a><a class="text-link" href="/challenge">Practice</a></div>
+<div class="header-actions">
+    <select id="languageSelect" aria-label="Select language" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="kn">ಕನ್ನಡ</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">☾ / ☀</button>
+</div>
+</header>
+
+<main class="dashboard-container">
+    <div class="dashboard-title">
+        <span class="eyebrow">YOUR LEARNING SUMMARY</span>
+        <h1>Progress dashboard</h1>
+        <p>Review your practice history and current skill estimates.</p>
+    </div>
+
+    <div class="stats-grid">
+    <div class="stat-card">
+        <span>Overall skill score</span>
+        <strong id="overallScore">Not enough data yet</strong>
+    </div>        
+    <div class="stat-card"><span>Challenges completed</span><strong id="attemptCount">0</strong></div>
+     <div class="stat-card"><span>Challenge types practiced</span><strong id="typesCount">0</strong></div>
+    </div>
+
+    <section class="progress-panel">
+        <div class="panel-header"><h2>Skill breakdown</h2><p>Scores update after each completed challenge.</p></div>
+        <div id="skillList"><p class="empty-state">Loading skills...</p></div>
+    </section>
+
+    <section class="progress-panel">
+        <div class="panel-header"><h2>Recent attempts</h2><p>Your latest completed challenges.</p></div>
+        <div id="attemptList"><p class="empty-state">Loading history...</p></div>
+    </section>
+
+    <button class="primary-button" onclick="window.location.href='/challenge'">Start a challenge</button>
+</main>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+<script>
+    window.addEventListener("load", loadDashboard);
+</script>
+</body>
+</html>

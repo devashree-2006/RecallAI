@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RecallAI | Memory Training</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+<div class="app">
+    <aside class="sidebar">
+        <div class="logo"><div class="logo-mark">R</div><div><h2>RecallAI</h2><span>Journal & memory companion</span></div></div>
+        <nav>
+            <button class="nav-item active" data-nav="chat" onclick="showChat()">Today & Chat</button>
+            <button class="nav-item" data-nav="journal" onclick="showJournal()">Journal</button>
+            <button class="nav-item" data-nav="practice" onclick="practice()">Practice</button>
+            <button class="nav-item" data-nav="progress" onclick="openDashboard()">Progress</button>
+        </nav>
+        <div class="sidebar-bottom">
+            <div class="disclaimer"><strong>About RecallAI</strong>A learning tool for memory exercises. It is not a medical diagnostic tool.</div>
+        </div>
+    </aside>
+
+    <main class="main">
+        <header class="topbar">
+            <div><h1>RecallAI Journal & Chat</h1><p>Your day, your questions, your memories — all in one place.</p></div>
+<div class="header-actions">
+    <select id="languageSelect" aria-label="Select language" onchange="setLanguage(this.value)">
+        <option value="en">English</option>
+        <option value="hi">हिन्दी</option>
+        <option value="kn">ಕನ್ನಡ</option>
+    </select>
+    <button class="theme-toggle" onclick="toggleTheme()">☾ / ☀</button>
+    <div id="userArea" class="user-area hidden">
+        <span id="usernameDisplay"></span>
+    </div>
+</div>        </header>
+
+        <section id="welcomeSection" class="welcome-card">
+            <div><span class="eyebrow">WELCOME TO RECALLAI</span><h2>Let's train your memory.</h2><p>Enter a username to begin your personal practice session.</p></div>
+            <div class="username-form">
+                <input id="username" maxlength="40" placeholder="Enter your username" autocomplete="nickname">
+                <button onclick="createUser()">Continue</button>
+            </div>
+        </section>
+
+        <section id="todayJournalCard" class="today-journal-card hidden" aria-labelledby="todayJournalTitle">
+            <div class="today-journal-heading">
+                <div>
+                    <span class="eyebrow">YOUR DAY, REMEMBERED</span>
+                    <h2 id="todayJournalTitle">A little note for today</h2>
+                    <p>Capture the moments you want to remember. Ask RecallAI about saved days whenever you like.</p>
+                </div>
+                <button class="secondary-button today-timeline-link" type="button" onclick="showJournal()">Open timeline <span aria-hidden="true">→</span></button>
+            </div>
+            <form id="todayJournalForm" class="today-journal-form" onsubmit="saveTodayJournalEntry(event)">
+                <label class="visually-hidden" for="todayJournalContent">What would you like to remember about today?</label>
+                <textarea id="todayJournalContent" maxlength="4000" rows="3" placeholder="Today I… Something that happened, a thought, or a small win…" required></textarea>
+                <div class="today-journal-footer">
+                    <span id="todayJournalStatus" class="journal-status" role="status">Your entries are saved in your RecallAI journal.</span>
+                    <button class="primary-button" type="submit"><span aria-hidden="true">✦</span> Save today’s note</button>
+                </div>
+            </form>
+            <div class="today-journal-preview">
+                <div class="today-journal-preview-heading"><strong>Today so far</strong><span id="todayJournalCount">Loading…</span></div>
+                <div id="todayJournalEntries" class="today-journal-entries"><p class="empty-state">Loading today’s notes…</p></div>
+            </div>
+        </section>
+        <section id="chatSection" class="chat-section">
+            <aside id="aiSetupNotice" class="ai-setup-notice hidden" aria-live="polite">
+                <div class="ai-setup-copy">
+                    <span class="eyebrow">OPEN-ENDED AI CHAT</span>
+                    <h2>Give RecallAI its answer engine</h2>
+                    <p>Your journal, daily recaps, memory practice, and tips work now. For broad answers without OpenAI billing, add a Gemini API key to your local <code>.env</code> file. Gemini's free tier has usage limits. Google may use free-tier prompts to improve its products, so don't include sensitive details in general chat.</p>
+                </div>
+                <div class="ai-setup-actions">
+                    <a class="primary-button" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Get a Gemini key <span aria-hidden="true">↗</span></a>
+                    <small>Gemini free tier has request limits.</small>
+                </div>
+            </aside>
+            <div class="chat-toolbar">
+                <div class="chat-status"><span id="chatStatusDot" class="status-dot"></span><div><strong id="chatStatusTitle">RecallAI is ready</strong><small id="chatStatusText">General answers are available when AI is configured</small></div></div>
+                <div class="chat-tools">
+                    <button class="chat-tool-button" type="button" onclick="exportChatHistory()" title="Download this conversation">Download</button>
+                    <button class="chat-tool-button" type="button" onclick="clearChatHistory()" title="Start a fresh conversation">New chat</button>
+                </div>
+            </div>
+            <div id="chatMessages" class="chat-messages">
+                <div class="message bot"><div class="avatar">R</div><div class="bubble"><strong>RecallAI</strong>Hi! I'm RecallAI. I can give you memory challenges, explain how the activities work, and track your progress.</div></div>
+            </div>
+            <div class="quick-actions">
+                <button onclick="sendQuickMessage('Quiz me')">Quick quiz</button>
+                <button onclick="sendQuickMessage('Give me a memory tip')">Memory tip</button>
+                <button onclick="sendQuickMessage('What did I do yesterday?')">Yesterday</button>
+                <button onclick="sendQuickMessage('Summarize my past few days')">Week recap</button>
+                <button onclick="sendQuickMessage('What can you do?')">What can you do?</button>
+            </div>
+            <div class="chat-input-area">
+                <input id="chatInput" placeholder="Ask RecallAI something..." onkeydown="handleChatKey(event)" maxlength="4000" aria-label="Message RecallAI">
+                <button id="voiceButton" class="voice-button" type="button" onclick="startVoiceInput()" aria-label="Speak your message" title="Speak your message">🎙</button>
+                <button onclick="sendMessage()">Send</button>
+            </div>
+            <p class="ai-privacy-note">General AI chat and recent general-chat context are sent to Google Gemini. On the free tier, Google may use prompts to improve its products. Journal entries and recaps are handled from your local saved journal.</p>
+            <p id="voiceStatus" class="voice-status" aria-live="polite"></p>
+        </section>
+
+        <section id="journalSection" class="journal-section hidden">
+            <div class="journal-heading">
+                <div><span class="eyebrow">YOUR PERSONAL TIMELINE</span><h2>Daily journal</h2><p>Share what happened. RecallAI answers from entries saved here.</p></div>
+            </div>
+            <form id="journalForm" class="journal-form" onsubmit="saveJournalEntry(event)">
+                <label for="journalDate">Entry date</label>
+                <input id="journalDate" type="date" required>
+                <label for="journalContent">What did you do?</label>
+                <textarea id="journalContent" maxlength="4000" rows="4" placeholder="Write a few details about your day..." required></textarea>
+                <button class="primary-button" type="submit">Save journal entry</button>
+                <p id="journalStatus" class="journal-status" role="status"></p>
+            </form>
+            <div class="journal-list-heading"><h3>Recent entries</h3><button class="secondary-button" type="button" onclick="loadJournalEntries()">Refresh</button></div>
+            <div id="journalEntries" class="journal-entries"><p class="empty-state">Loading your journal...</p></div>
+        </section>
+
+        <section id="challengeSection" class="challenge-section hidden">
+            <div class="challenge-header">
+                <div><span class="eyebrow">MEMORY PRACTICE</span><h2 id="challengeTitle">Your Challenge</h2></div>
+                <span id="difficultyBadge" class="difficulty-badge">Level 1</span>
+            </div>
+            <div id="challengeContent" class="challenge-card"></div>
+        </section>
+    </main>
+</div>
+<script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
