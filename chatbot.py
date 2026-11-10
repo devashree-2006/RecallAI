@@ -19,7 +19,7 @@ INTENTS = {
 DATE_PATTERN = re.compile(r"\b(\d{4}-\d{2}-\d{2})\b")
 STOP_WORDS = set("about after again also and are because before been being between could did does doing done during each from have having here how into just more most much not only other our out over same she should some than that the their them then there these they this those through today tomorrow under until very was were what when where which while who why will with would your yours yesterday activity activities went had have has worked work workin working studied study studying attended visited meet met called call cooked ate eat bought buy".split())
 
-AI_INSTRUCTIONS = """You are RecallAI, a friendly, clear assistant inside a personal memory and journal app. Answer the user's actual question directly and helpfully across general topics. Never invent personal details about the user: personal activity can only be recalled from explicit saved journal entries handled by the app. If you do not know something, say so. Do not claim to have searched the web or cite sources you were not given. For facts that may have changed, mention that the user should verify them with a current source. Keep answers readable and appropriately concise. If the user asks to start a memory challenge or view progress, the app handles that with its built-in actions."""
+AI_INSTRUCTIONS = """You are RecallAI, a friendly, clear assistant inside a personal memory and journal app. Answer the user's actual question directly and helpfully across general topics. Never invent personal details about the user: personal activity can only be recalled from explicit saved journal entries handled by the app. If you do not know something, say so. Do not claim to have searched the web or cite sources you were not given. Keep answers readable and appropriately concise. If the user asks to start a memory challenge or view progress, the app handles that with its built-in actions."""
 
 
 class AIUnavailableError(RuntimeError):
@@ -133,7 +133,7 @@ def _get_openai_response(message, history=None):
 def _retry_gemini_fallback(message, history, primary_model, allow_fallback, reason):
     if not allow_fallback:
         return None
-    fallback_model = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.6-flash").strip()
+    fallback_model = os.getenv("GEMINI_FALLBACK_MODEL", "gemini-3.5-flash").strip()
     if not fallback_model or fallback_model == primary_model:
         return None
     try:
@@ -142,13 +142,8 @@ def _retry_gemini_fallback(message, history, primary_model, allow_fallback, reas
         )
     except AIUnavailableError as fallback_error:
         raise AIUnavailableError(
-            f"Gemini's primary model {primary_model} had a {reason}, and backup model "
-            f"{fallback_model} also failed. {fallback_error}"
+            f"The response service could not complete your request. {fallback_error}"
         ) from None
-    result["message"] = (
-        f"{primary_model} had a {reason}, so I answered with {fallback_model}.\n\n"
-        f"{result['message']}"
-    )
     return result
 
 
@@ -183,7 +178,7 @@ def _get_gemini_response(message, history=None, model_override=None, allow_fallb
         "contents": contents,
         "generation_config": {"max_output_tokens": 800}
     }).encode("utf-8")
-    model = (model_override or os.getenv("GEMINI_MODEL", "gemini-3.8-flash")).strip()
+    model = (model_override or os.getenv("GEMINI_MODEL", "gemini-3.6-flash")).strip()
     request = urllib.request.Request(
         f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent",
         data=body,
@@ -191,7 +186,7 @@ def _get_gemini_response(message, history=None, model_override=None, allow_fallb
         method="POST"
     )
     try:
-        with urllib.request.urlopen(request, timeout=60) as response:
+        with urllib.request.urlopen(request, timeout=12) as response:
             payload = json.loads(response.read().decode("utf-8"))
     except urllib.error.HTTPError as error:
         try:
