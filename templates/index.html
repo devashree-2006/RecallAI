@@ -69,13 +69,13 @@
         <section id="chatSection" class="chat-section">
             <aside id="aiSetupNotice" class="ai-setup-notice hidden" aria-live="polite">
                 <div class="ai-setup-copy">
-                    <span class="eyebrow">OPEN-ENDED AI CHAT</span>
-                    <h2>Give RecallAI its answer engine</h2>
-                    <p>Your journal, daily recaps, memory practice, and tips work now. For broad answers without OpenAI billing, add a Gemini API key to your local <code>.env</code> file. Gemini's free tier has usage limits. Google may use free-tier prompts to improve its products, so don't include sensitive details in general chat.</p>
+                    <span class="eyebrow">CONVERSATION ENGINE</span>
+                    <h2>Connect the assistant engine</h2>
+                    <p>Your journal, daily recaps, memory practice, and tips work right away. To enable extended conversational answers, configure your API key in your local <code>.env</code> file. Journal entries and daily notes remain stored securely on your local machine.</p>
                 </div>
                 <div class="ai-setup-actions">
-                    <a class="primary-button" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Get a Gemini key <span aria-hidden="true">↗</span></a>
-                    <small>Gemini free tier has request limits.</small>
+                    <a class="primary-button" href="https://aistudio.google.com/app/apikey" target="_blank" rel="noopener noreferrer">Get an API key <span aria-hidden="true">↗</span></a>
+                    <small>Standard service rate limits apply.</small>
                 </div>
             </aside>
             <div class="chat-toolbar">
@@ -100,7 +100,7 @@
                 <button id="voiceButton" class="voice-button" type="button" onclick="startVoiceInput()" aria-label="Speak your message" title="Speak your message">🎙</button>
                 <button onclick="sendMessage()">Send</button>
             </div>
-            <p class="ai-privacy-note">General AI chat and recent general-chat context are sent to Google Gemini. On the free tier, Google may use prompts to improve its products. Journal entries and recaps are handled from your local saved journal.</p>
+            <p class="ai-privacy-note">Conversations are processed securely to provide contextual responses. Journal entries, daily recaps, and personal memory data are stored locally on your device.</p>
             <p id="voiceStatus" class="voice-status" aria-live="polite"></p>
         </section>
 
