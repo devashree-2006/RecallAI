@@ -795,8 +795,10 @@ input:focus {
 /* CHALLENGE PAGE */
 
 .challenge-section {
-    margin: 30px;
+    margin: 24px auto 30px;
     max-width: 1050px;
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .challenge-header {
@@ -840,6 +842,10 @@ input:focus {
 .challenge-card {
     text-align: center;
     min-height: 290px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
 
 .challenge-instruction {
@@ -916,9 +922,12 @@ input:focus {
 }
 
 .answer-input {
-    margin: 12px auto;
+    margin: 14px auto;
     display: block;
     max-width: 650px;
+    width: 100%;
+    text-align: center;
+    box-sizing: border-box;
 }
 
 /* RESULTS */
@@ -1001,13 +1010,26 @@ input:focus {
     margin-bottom: 28px;
 }
 
+.dashboard-title {
+    margin-bottom: 24px;
+}
+
 .dashboard-title h1 {
     font-size: 25px;
     letter-spacing: -0.6px;
 }
 
+.dashboard-container,
 .dashboard-content {
-    padding: 0 30px 35px;
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 0 30px 45px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.challenge-back-btn {
+    margin-top: 14px;
 }
 
 .stats-grid {
@@ -1521,7 +1543,7 @@ body.dark-theme .message.user .bubble strong {
     }
 
     .challenge-section {
-        margin: 20px 16px;
+        margin: 20px auto;
     }
 
     .journal-section {
@@ -1541,6 +1563,7 @@ body.dark-theme .message.user .bubble strong {
         margin-bottom: 20px;
     }
 
+    .dashboard-container,
     .dashboard-content {
         padding: 0 16px 25px;
     }
